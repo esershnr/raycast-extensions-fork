@@ -1,7 +1,7 @@
 import {
   Color,
   Icon,
-  MenuBarExtra,
+  MenuBarExtra as MenuBarExtraOriginal,
   getPreferenceValues,
   openCommandPreferences,
   openExtensionPreferences,
@@ -9,6 +9,9 @@ import {
 import { useEffect, useState } from "react";
 import { toggleSystemAudioInputLevel } from "./utils";
 import { AudioInputLevelCache } from "./audio-input-level-cache";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const MenuBarExtra = MenuBarExtraOriginal as any;
 
 export default function muteMenuBar() {
   const preferences = getPreferenceValues<Preferences.MuteMenuBar>();
@@ -50,13 +53,17 @@ export default function muteMenuBar() {
 
   return (
     <MenuBarExtra icon={icon} tooltip="Audio input volume">
-      <MenuBarExtra.Section>
-        <MenuBarExtra.Item title={menuItemText} onAction={handleToggleIconButton} />
-      </MenuBarExtra.Section>
-      <MenuBarExtra.Section>
-        <MenuBarExtra.Item title="Configure default level" onAction={openExtensionPreferences} />
-        <MenuBarExtra.Item icon={Icon.Gear} title="Settings" onAction={openCommandPreferences} />
-      </MenuBarExtra.Section>
+      <>
+        <MenuBarExtra.Section>
+          <MenuBarExtra.Item title={menuItemText} onAction={handleToggleIconButton} />
+        </MenuBarExtra.Section>
+        <MenuBarExtra.Section>
+          <>
+            <MenuBarExtra.Item title="Configure default level" onAction={openExtensionPreferences} />
+            <MenuBarExtra.Item icon={Icon.Gear} title="Settings" onAction={openCommandPreferences} />
+          </>
+        </MenuBarExtra.Section>
+      </>
     </MenuBarExtra>
   );
 }
