@@ -12,8 +12,14 @@ export const isWindows = platform() === "win32";
 
 async function getAudioInputLevel() {
   if (isWindows) {
-    // Windows logic: placeholder implementation
-    return "100";
+    try {
+      const scriptPath = path.join(environment.assetsPath, "scripts", "windows-get-level.ps1");
+      const { stdout } = await execAsync(`powershell -ExecutionPolicy Bypass -File "${scriptPath}"`);
+      return stdout.trim();
+    } catch (e) {
+      console.error(e);
+      return "0";
+    }
   }
 
   const result = await runAppleScript(`
@@ -34,33 +40,7 @@ export async function setAudioInputLevel(v: string) {
   AudioInputLevelCache.curInputLevel = v;
 }
 
-const toggleWindowsMic = async (): Promise<string> => {
-  try {
-    const scriptPath = path.join(environment.assetsPath, "scripts", "windows-toggle.ps1");
-    // Execute PowerShell script
-    const { stdout } = await execAsync(`powershell -ExecutionPolicy Bypass -File "${scriptPath}"`);
-
-    // Determine status based on script output (Basic check)
-    // If script returns "Muted", assume level 0, otherwise 100.
-    const output = stdout.trim();
-    if (output.toUpperCase().includes("MUTED")) {
-      AudioInputLevelCache.curInputLevel = "0";
-      return "0";
-    } else {
-      AudioInputLevelCache.curInputLevel = "100";
-      return "100";
-    }
-  } catch (error) {
-    console.error("Windows script error:", error);
-    throw new Error("Failed to toggle microphone on Windows");
-  }
-};
-
 const toggleSystemAudioInputLevelWithPreviousLevel = async (): Promise<string> => {
-  if (isWindows) {
-    return await toggleWindowsMic();
-  }
-
   const currentLevel = await getAudioInputLevel();
 
   if (currentLevel === "0") {

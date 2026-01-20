@@ -1,9 +1,3 @@
-param(
-    [Parameter(Mandatory=$true)]
-    [ValidateRange(0,100)]
-    [int]$Level
-)
-
 $AudioCode = @'
 using System;
 using System.Runtime.InteropServices;
@@ -58,18 +52,16 @@ namespace RaycastAudio {
             return (IAudioEndpointVolume)obj;
         }
         
-        public static void SetVolume(float level) { 
-            Vol().SetMasterVolumeLevelScalar(level, Guid.Empty); 
-        }
-        
         public static float GetVolume() { 
             float level = 0; 
             Vol().GetMasterVolumeLevelScalar(out level); 
             return level; 
         }
 
-        public static void SetMute(bool mute) {
-            Vol().SetMute(mute, Guid.Empty);
+        public static bool GetMute() {
+            bool muted = false;
+            Vol().GetMute(out muted);
+            return muted;
         }
     }
 }
@@ -80,13 +72,13 @@ if (-not ("RaycastAudio.Audio" -as [type])) {
 }
 
 try {
-    $normalizedLevel = $Level / 100.0
-    [RaycastAudio.Audio]::SetVolume($normalizedLevel)
-
-    if ($Level -gt 0) {
-        [RaycastAudio.Audio]::SetMute($false)
+    $muted = [RaycastAudio.Audio]::GetMute()
+    if ($muted) {
+        Write-Output "0"
     } else {
-        [RaycastAudio.Audio]::SetMute($true)
+        $vol = [RaycastAudio.Audio]::GetVolume()
+        $level = [Math]::Round($vol * 100)
+        Write-Output $level
     }
 }
 catch {

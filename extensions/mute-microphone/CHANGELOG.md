@@ -1,10 +1,11 @@
 # Mute microphone Changelog
 
-## [Windows Support] - 2026-01-19
+## [Windows Support] - {PR_MERGE_DATE}
 
 - Added support for Windows using PowerShell scripts
 - Implemented platform detection to switch between macOS (AppleScript) and Windows (PowerShell)
 - Added 'Set Level' support for Windows
+- Improved TypeScript type safety and removed 'any' usage
 
 ## [Bugfix] - 2024-10-16
 
