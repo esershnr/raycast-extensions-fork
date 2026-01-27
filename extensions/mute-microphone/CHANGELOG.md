@@ -1,6 +1,6 @@
 # Mute microphone Changelog
 
-## [Windows Support] - {PR_MERGE_DATE}
+## [Windows Support] - 2026-01-27
 
 - Added support for Windows using PowerShell scripts
 - Implemented platform detection to switch between macOS (AppleScript) and Windows (PowerShell)
